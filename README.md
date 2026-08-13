@@ -1,8 +1,18 @@
-# FrameWise OpenClaw Skills
+# FrameWise Skills
 
-帧知 FrameWise 的 OpenClaw 技能集合。把帧知的视频解析和知识库查询能力接入你的 OpenClaw 机器人，在微信、飞书、钉钉、Telegram 等 IM 中直接使用。
+帧知 FrameWise 的 AI Agent 技能集合。把帧知的视频解析和知识库查询能力接入你使用的 AI Agent，在对话中直接使用。
 
-> **线上访问**：[https://www.framewise.cc](https://www.framewise.cc) · [接入指南](https://www.framewise.cc/openclaw)
+> **线上访问**：[https://www.framewise.cc](https://www.framewise.cc) · [接入指南](https://www.framewise.cc/skills)
+
+## 兼容性
+
+本仓库的 Skill 基于 SKILL.md 标准机制，纯 curl 脚本实现，零依赖。兼容所有支持 Skill 机制的 AI Agent，包括但不限于：
+
+- **Claude Code**
+- **Codex**
+- **OpenClaw**
+- **Hermes**
+- 其他支持 SKILL.md + shell 脚本的 Agent
 
 ## 技能列表
 
@@ -18,22 +28,40 @@
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/zjc151/framewise-openclaw-skills.git
+git clone https://github.com/zjc151/framewise-skills.git
 ```
 
-### 2. 复制所需技能到 OpenClaw skills 目录
+### 2. 复制所需技能到你的 Agent skills 目录
+
+不同 Agent 的 skills 目录不同：
+
+| Agent | Skills 目录 | 配置方式 |
+| --- | --- | --- |
+| Claude Code | `~/.claude/skills/` | 环境变量 `FRAMEWISE_API_KEY` |
+| Codex | `~/.codex/skills/` | 环境变量 `FRAMEWISE_API_KEY` |
+| OpenClaw | `~/.openclaw/skills/` | `openclaw.json` skills.entries |
+| Hermes | `~/.hermes/skills/` | 环境变量 `FRAMEWISE_API_KEY` |
+| 通用 / 其他 | `~/.<agent>/skills/` | 环境变量 `FRAMEWISE_API_KEY` |
 
 ```bash
-# 安装视频解析技能
-cp -r framewise-openclaw-skills/skills/framewise-video ~/.openclaw/skills/
-
-# 安装知识库查询技能
-cp -r framewise-openclaw-skills/skills/framewise-knowledge ~/.openclaw/skills/
+# 以 Claude Code 为例：
+cp -r framewise-skills/skills/framewise-video ~/.claude/skills/
+cp -r framewise-skills/skills/framewise-knowledge ~/.claude/skills/
 ```
 
 ### 3. 配置 API Key
 
-编辑 `~/.openclaw/openclaw.json`，填入你在 [帧知设置页](https://www.framewise.cc/settings) 生成的 `fw_` 开头 API Key：
+#### 方式一：环境变量（通用，推荐）
+
+```bash
+export FRAMEWISE_API_KEY="fw_你的密钥"
+```
+
+在 [帧知设置页](https://www.framewise.cc/settings) 生成 `fw_` 开头的 API Key。
+
+#### 方式二：openclaw.json（OpenClaw 专用）
+
+编辑 `~/.openclaw/openclaw.json`：
 
 ```json
 {
@@ -52,13 +80,12 @@ cp -r framewise-openclaw-skills/skills/framewise-knowledge ~/.openclaw/skills/
 }
 ```
 
-### 4. 重启 OpenClaw 网关
+### 4. 重启 Agent 网关
 
 ```bash
+# 按你的 Agent 方式重启，例如 OpenClaw:
 openclaw gateway restart
 ```
-
-用 `openclaw skills list` 确认技能已加载。
 
 ## 获取 API Key
 
@@ -73,16 +100,16 @@ openclaw gateway restart
 
 | 端点 | 方法 | 说明 |
 | --- | --- | --- |
-| `/api/v1/openclaw/parse` | POST | 提交解析任务 |
-| `/api/v1/openclaw/tasks/{task_id}` | GET | 查询任务状态 |
+| `/api/v1/agent/parse` | POST | 提交解析任务 |
+| `/api/v1/agent/tasks/{task_id}` | GET | 查询任务状态 |
 
 ### 知识库查询（framewise-knowledge）
 
 | 端点 | 方法 | 说明 |
 | --- | --- | --- |
-| `/api/v1/openclaw/documents` | GET | 搜索/列出知识库文档 |
-| `/api/v1/openclaw/documents/{doc_id}` | GET | 获取文档详情（含 Markdown 正文） |
-| `/api/v1/openclaw/documents/{doc_id}/qa` | POST | 基于文档内容问答 |
+| `/api/v1/agent/documents` | GET | 搜索/列出知识库文档 |
+| `/api/v1/agent/documents/{doc_id}` | GET | 获取文档详情（含 Markdown 正文） |
+| `/api/v1/agent/documents/{doc_id}/qa` | POST | 基于文档内容问答 |
 
 所有接口均使用 `Authorization: Bearer fw_密钥` 认证。详见 [API 参考文档](docs/api-reference.md)。
 
@@ -101,7 +128,7 @@ Nginx 层另有按 IP 的兜底限流（15 次/分钟 burst=10）。
 ## 目录结构
 
 ```
-framewise-openclaw-skills/
+framewise-skills/
 ├── README.md                          # 本文件
 ├── skills/
 │   ├── framewise-video/               # 视频解析技能
@@ -109,14 +136,14 @@ framewise-openclaw-skills/
 │   │   ├── scripts/
 │   │   │   ├── framewise_parse.sh     # 提交解析
 │   │   │   └── framewise_status.sh    # 查询状态
-│   │   └── .openclaw.example.json
+│   │   └── .env.example
 │   └── framewise-knowledge/           # 知识库查询技能
 │       ├── SKILL.md
 │       ├── scripts/
 │       │   ├── framewise_search.sh    # 搜索知识库
 │       │   ├── framewise_doc.sh       # 获取文档详情
 │       │   └── framewise_qa.sh        # 文档问答
-│       └── .openclaw.example.json
+│       └── .env.example
 └── docs/
     └── api-reference.md               # API 参考文档
 ```
@@ -125,9 +152,6 @@ framewise-openclaw-skills/
 
 - **密钥泄露了怎么办？** 到帧知设置页「API 密钥」撤销该密钥，重新生成即可，旧密钥立即失效。
 - **两个技能需要两个 API Key 吗？** 不需要，共用同一个。
-- **视频解析完怎么自动通知我？** 提交解析时带 `--callback` 参数指向你的 OpenClaw webhook 端点，解析完成后帧知会主动推送结果。
+- **视频解析完怎么自动通知我？** 提交解析时带 `--callback` 参数指向你的 Agent webhook 端点，解析完成后帧知会主动推送结果。
 - **知识库查询返回的图片模型能看吗？** 文档详情接口返回的 content_md 中，图片 URL 已替换为完整 HTTPS 链接。多模态模型（如 GPT-4o、Claude、Qwen-VL）可直接拉取图片读取内容；纯文本模型会忽略图片 URL，只看文字。
-
-## 旧仓库
-
-此仓库是整合版，旧仓库 [framewise-openclaw-skill](https://github.com/zjc151/framewise-openclaw-skill) 保留不动（仅含 video skill），不再更新。请迁移到本仓库。
+- **不支持我的 Agent？** 只要你的 Agent 支持 SKILL.md 技能机制和 shell 脚本调用，就可以使用。技能脚本纯 curl 实现，零依赖。

@@ -37,7 +37,7 @@ fi
 if [ -n "$QS" ]; then QS="${QS}&"; fi
 QS="${QS}page=${PAGE}&page_size=10"
 
-RESP=$(curl -sS --max-time 30 "${API_BASE}/api/v1/openclaw/documents?${QS}" \
+RESP=$(curl -sS --max-time 30 "${API_BASE}/api/v1/agent/documents?${QS}" \
   -H "Authorization: Bearer ${API_KEY}")
 
 printf '%s\n' "$RESP"

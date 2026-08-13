@@ -42,7 +42,7 @@ EOF
 )
 fi
 
-RESP=$(curl -sS --max-time 30 -X POST "${API_BASE}/api/v1/openclaw/parse" \
+RESP=$(curl -sS --max-time 30 -X POST "${API_BASE}/api/v1/agent/parse" \
   -H "Authorization: Bearer ${API_KEY}" \
   -H "Content-Type: application/json" \
   -d "$BODY")

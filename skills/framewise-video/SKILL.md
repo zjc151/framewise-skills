@@ -7,7 +7,7 @@ metadata:
       {
         "emoji": "🎬",
         "primaryEnv": "FRAMEWISE_API_KEY",
-        "homepage": "https://www.framewise.cc/openclaw",
+        "homepage": "https://www.framewise.cc/skills",
         "requires": { "bins": ["curl", "sh"] }
       }
   }
@@ -31,7 +31,7 @@ metadata:
 
 1. 需要帧知平台 API Key。从环境变量 `FRAMEWISE_API_KEY` 读取。
 2. 若环境变量为空或调用返回 401：
-   - 明确告诉用户：「需要配置帧知 API Key。请访问 https://www.framewise.cc/openclaw 查看配置方法（在账户设置里生成 fw_ 开头的密钥），或在 openclaw.json 的 skills.entries.framewise-video.apiKey 中填入。」
+   - 明确告诉用户：「需要配置帧知 API Key。请访问 https://www.framewise.cc/skills 查看配置方法（在账户设置里生成 fw_ 开头的密钥），或在环境变量 FRAMEWISE_API_KEY 或 openclaw.json 的 skills.entries.framewise-video.apiKey 中填入。」
    - 不要继续尝试。
 
 ## 工作流程
@@ -60,7 +60,7 @@ metadata:
 {baseDir}/scripts/framewise_parse.sh "<URL>" "$FRAMEWISE_API_KEY" --model qwen-3.6-flash
 
 # 指定回调地址（可选，见「回调模式」）
-{baseDir}/scripts/framewise_parse.sh "<URL>" "$FRAMEWISE_API_KEY" --callback "http://<openclaw-host>:18789/hooks/agent"
+{baseDir}/scripts/framewise_parse.sh "<URL>" "$FRAMEWISE_API_KEY" --callback "http://<your-agent-host>:<port>/hooks/agent"
 ```
 
 脚本输出 JSON，从中读取 `task_id`（形如 `task_xxx`）。若返回错误，把错误信息原样转述给用户。
@@ -69,7 +69,7 @@ metadata:
 
 #### 模式 A：回调（推荐，若提交时带了 --callback）
 
-- 帧知会在解析完成/失败后主动 POST 结果到 `callback_url`（你的 OpenClaw webhook 端点）。
+- 帧知会在解析完成/失败后主动 POST 结果到 `callback_url`（你的 Agent webhook 端点）。
 - 等待回调内容，从中读取 `result_url` 与 `status`。
 - 若长时间未收到回调，可回退到模式 B 轮询。
 
@@ -92,7 +92,7 @@ metadata:
 
 ## 错误处理
 
-- **401**：API Key 无效或未配置 → 引导用户到 https://www.framewise.cc/openclaw 配置。
+- **401**：API Key 无效或未配置 → 引导用户到 https://www.framewise.cc/skills 配置。
 - **429**：限流 → 等待 60 秒重试，不要连续请求。
 - **404（任务不存在）**：task_id 可能过期，重新提交。
 - **failed + error_msg**：把 error_msg 转述给用户（常见：链接无法下载、视频时长超过账号等级限制、模型不可用）。

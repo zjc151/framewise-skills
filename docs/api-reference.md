@@ -1,4 +1,4 @@
-# FrameWise OpenClaw API 参考
+# FrameWise Skills API 参考
 
 所有接口的 Base URL：`https://www.framewise.cc`
 
@@ -8,7 +8,7 @@
 
 ## 视频解析
 
-### POST /api/v1/openclaw/parse
+### POST /api/v1/agent/parse
 
 提交视频链接解析任务。
 
@@ -19,7 +19,7 @@
   "platform": "auto",
   "prompt": "重点关注操作步骤（可选）",
   "model": "qwen-3.6-flash",
-  "callback_url": "https://你的openclaw地址/hooks/agent"
+  "callback_url": "https://你的agent地址/hooks/agent"
 }
 ```
 
@@ -34,7 +34,7 @@
 }
 ```
 
-### GET /api/v1/openclaw/tasks/{task_id}
+### GET /api/v1/agent/tasks/{task_id}
 
 查询解析任务状态。限流：每用户每任务 1 次/分钟。
 
@@ -57,7 +57,7 @@
 
 ## 知识库查询
 
-### GET /api/v1/openclaw/documents
+### GET /api/v1/agent/documents
 
 搜索/列出当前用户的知识库文档。限流：每用户 10 次/分钟。
 
@@ -90,7 +90,7 @@
 }
 ```
 
-### GET /api/v1/openclaw/documents/{doc_id}
+### GET /api/v1/agent/documents/{doc_id}
 
 获取文档详情（含完整 Markdown 正文）。限流：每用户 10 次/分钟。
 
@@ -112,9 +112,9 @@
 }
 ```
 
-> **图片 URL**：content_md 中的图片路径已替换为完整 HTTPS URL（如 `https://www.framewise.cc/api/v1/files/keyframes/{uuid}/000.jpg`）。多模态模型可直接拉取图片内容；纯文本模型会忽略图片，只看文字。图片 URL 无需认证即可访问。
+> **图片 URL**：content_md 中的图片路径已替换为完整 HTTPS URL。多模态模型可直接拉取图片内容；纯文本模型会忽略图片，只看文字。图片 URL 无需认证即可访问。
 
-### POST /api/v1/openclaw/documents/{doc_id}/qa
+### POST /api/v1/agent/documents/{doc_id}/qa
 
 基于文档内容问答。限流：每用户 5 次/分钟 + 每文档 3 次/分钟。
 

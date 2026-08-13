@@ -23,7 +23,7 @@ else
   BODY="{\"question\":\"${ESC_Q}\"}"
 fi
 
-RESP=$(curl -sS --max-time 120 -X POST "${API_BASE}/api/v1/openclaw/documents/${DOC_ID}/qa" \
+RESP=$(curl -sS --max-time 120 -X POST "${API_BASE}/api/v1/agent/documents/${DOC_ID}/qa" \
   -H "Authorization: Bearer ${API_KEY}" \
   -H "Content-Type: application/json" \
   -d "$BODY")

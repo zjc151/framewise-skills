@@ -7,7 +7,7 @@ metadata:
       {
         "emoji": "📚",
         "primaryEnv": "FRAMEWISE_API_KEY",
-        "homepage": "https://www.framewise.cc/openclaw",
+        "homepage": "https://www.framewise.cc/skills",
         "requires": { "bins": ["curl", "sh"] }
       }
   }
@@ -32,7 +32,7 @@ metadata:
 
 1. 需要帧知平台 API Key（与 `framewise-video` 技能共用同一个密钥）。从环境变量 `FRAMEWISE_API_KEY` 读取。
 2. 若环境变量为空或调用返回 401：
-   - 明确告诉用户：「需要配置帧知 API Key。请访问 https://www.framewise.cc/openclaw 查看配置方法（在账户设置里生成 fw_ 开头的密钥），或在 openclaw.json 的 skills.entries.framewise-knowledge.apiKey 中填入。」
+   - 明确告诉用户：「需要配置帧知 API Key。请访问 https://www.framewise.cc/skills 查看配置方法（在账户设置里生成 fw_ 开头的密钥），或在环境变量 FRAMEWISE_API_KEY 或 openclaw.json 的 skills.entries.framewise-knowledge.apiKey 中填入。」
    - 不要继续尝试。
 
 ## 工作流程
@@ -95,7 +95,7 @@ metadata:
 
 ## 错误处理
 
-- **401**：API Key 无效或未配置 -> 引导用户到 https://www.framewise.cc/openclaw 配置。
+- **401**：API Key 无效或未配置 -> 引导用户到 https://www.framewise.cc/skills 配置。
 - **429**：限流 -> 告知用户稍后再试，不要连续请求。
 - **404（文档不存在）**：doc_id 可能错误或文档已被删除，建议用户重新搜索。
 - **搜索结果为空**：建议用户换个关键词，或先通过 `framewise-video` 技能解析视频入库后再查询。

@@ -14,7 +14,7 @@ if [ -z "$TASK_ID" ] || [ -z "$API_KEY" ]; then
   exit 1
 fi
 
-RESP=$(curl -sS --max-time 30 "${API_BASE}/api/v1/openclaw/tasks/${TASK_ID}" \
+RESP=$(curl -sS --max-time 30 "${API_BASE}/api/v1/agent/tasks/${TASK_ID}" \
   -H "Authorization: Bearer ${API_KEY}")
 
 printf '%s\n' "$RESP"
